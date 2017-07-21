@@ -1,0 +1,36 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "*": ["../typings/module/*"],
+      "@/*": ["./*"]
+    },
+    "typeRoots": ["../../../node_modules/@types", "../../node_modules/@types"],
+    "target": "es5",
+    "outDir": "../../../app/dist/renderer",
+    "declaration": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "noFallthroughCasesInSwitch": true,
+    "strict": true, // noImplicitAny, noImplicitThis, alwaysStrict, strictNullChecks
+    "removeComments": true,
+    "sourceMap": true,
+    "inlineSources": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "forceConsistentCasingInFileNames": true,
+
+    // Vue.js Recommended Configuration
+    "module": "es2015",
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "lib": ["dom", "es6"]
+  },
+  "include": [
+    "./**/*",
+    "../typings/renderer.d.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

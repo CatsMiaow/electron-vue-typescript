@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>테스티드</title>
+    <base href="./">
+  </head>
+
+  <body>
+    <div id="Tested">
+      <md-layout md-align="center" md-vertical-align="center" v-show="loading">
+        <md-spinner md-indeterminate class="md-accent"></md-spinner>
+      </md-layout>
+
+      <router-view v-show="!loading"
+        @loading="loading = true"
+        @ready="loading = false"></router-view>
+    </div>
+  </body>
+</html>

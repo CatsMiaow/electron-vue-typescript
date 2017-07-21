@@ -1,0 +1,50 @@
+<md-tabs @change="changeTab">
+  <md-tab md-label="작성" :md-active="activeTab == 0">
+    <md-layout md-gutter>
+      <md-layout>
+        <form @submit.stop.prevent="save">
+          <md-input-container>
+            <label>UserId</label>
+            <md-input v-model.trim="form.userId" required disabled readonly></md-input>
+          </md-input-container>
+          <md-input-container>
+            <label>Title</label>
+            <md-input v-model.trim="form.title" required disabled readonly></md-input>
+          </md-input-container>
+          <md-input-container>
+            <label>Body</label>
+            <md-input v-model.trim="form.body" required disabled readonly></md-input>
+          </md-input-container>
+
+          <br />
+          <md-button type="submit" class="md-raised md-accent">등록</md-button>
+        </form>
+      </md-layout>
+      <md-layout>
+
+      </md-layout>
+    </md-layout>
+  </md-tab>
+
+  <md-tab md-label="목록" :md-active="activeTab == 1">
+    <md-table>
+      <md-table-header>
+        <md-table-row>
+          <md-table-head md-numeric>UserId</md-table-head>
+          <md-table-head md-numeric>ID</md-table-head>
+          <md-table-head>Title</md-table-head>
+          <md-table-head>Body</md-table-head>
+        </md-table-row>
+      </md-table-header>
+
+      <md-table-body>
+        <md-table-row v-for="(item, index) in list" :key="index">
+          <md-table-cell md-numeric>{{item.userId}}</md-table-cell>
+          <md-table-cell md-numeric>{{item.id}}</md-table-cell>
+          <md-table-cell>{{item.title}}</md-table-cell>
+          <md-table-cell>{{item.body}}</md-table-cell>
+        </md-table-row>
+      </md-table-body>
+    </md-table>
+  </md-tab>
+</md-tabs>

@@ -1,0 +1,63 @@
+{
+  "name": "electron-vue-typescript",
+  "version": "0.1.0",
+  "description": "Electron Vue.js Structure for TypeScript Example",
+  "main": "app/dist/main/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "tslint app/src/**/*.ts",
+    "build:main": "rimraf app/dist/main && tsc -p app/src/main",
+    "build:renderer": "rimraf app/dist/renderer && webpack --config config/webpack.prod.js --progress --profile --bail",
+    "dev:main": "electron config/electron.dev.js",
+    "dev:renderer": "webpack-dev-server --config config/webpack.dev.js --inline --progress --profile --port 3000",
+    "package": "node config/electron.packager"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^8.0.14",
+    "awesome-typescript-loader": "^3.2.1",
+    "copy-webpack-plugin": "^4.0.1",
+    "css-loader": "^0.28.4",
+    "dtslint": "^0.1.2",
+    "electron": "^1.6.11",
+    "electron-debug": "^1.2.0",
+    "electron-devtools-installer": "^2.2.0",
+    "electron-packager": "^8.7.2",
+    "electron-rebuild": "^1.5.11",
+    "extract-text-webpack-plugin": "^3.0.0",
+    "file-loader": "^0.11.2",
+    "html-loader": "^0.4.5",
+    "html-webpack-plugin": "^2.29.0",
+    "json-loader": "^0.5.4",
+    "material-design-icons-iconfont": "^3.0.3",
+    "raw-loader": "^0.5.1",
+    "rimraf": "^2.6.1",
+    "style-loader": "^0.18.2",
+    "tslint": "^5.5.0",
+    "tslint-loader": "^3.5.3",
+    "tslint-microsoft-contrib": "^5.0.1",
+    "typescript": "^2.4.1",
+    "vue": "^2.4.1",
+    "vue-material": "^0.7.4",
+    "vue-property-decorator": "^5.1.1",
+    "vue-router": "^2.7.0",
+    "vuelidate": "^0.5.0",
+    "webpack": "^3.3.0",
+    "webpack-dev-server": "^2.5.1",
+    "webpack-merge": "^4.1.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/CatsMiaow/electron-vue-typescript.git"
+  },
+  "keywords": [
+    "Electron",
+    "TypeScript",
+    "Vue",
+    "Vuejs",
+    "Webpack"
+  ],
+  "homepage": "https://tested.co.kr",
+  "author": "infiltrator@naver.com",
+  "license": "MIT"
+}
