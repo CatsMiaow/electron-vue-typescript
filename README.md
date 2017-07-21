@@ -24,7 +24,7 @@ $ npm run package
 #### Menu
 ```javascript
 +-- View
-|   +-- 홈(Home) // 메인으로
+|   +-- 홈(Home) // vue-material 정적 페이지
 |   +-- 구글 // 구글 웹뷰
 |   +-- 네이버 // 네이버 웹뷰
 |   +-- 다음 // 다음 웹뷰
