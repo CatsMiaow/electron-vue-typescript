@@ -1,0 +1,11 @@
+<v-dialog class="mx-auto" max-width="400" value="true" @input="close">
+  <v-card>
+    <v-card-title v-if="title" v-text="title"></v-card-title>
+    <v-card-text v-if="desc" v-text="desc"></v-card-text>
+    <v-card-actions>
+      <v-spacer></v-spacer>
+      <v-btn color="error" text @click="selected(false)">아니오</v-btn>
+      <v-btn color="success" text @click="selected(true)">예</v-btn>
+    </v-card-actions>
+  </v-card>
+</v-dialog>

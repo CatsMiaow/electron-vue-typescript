@@ -1,0 +1,35 @@
+<v-row no-gutters>
+  <v-col>
+    <v-system-bar color="info" dark>
+      <v-icon>info</v-icon>
+      <span>LocalStorage Data Test</span>
+    </v-system-bar>
+
+    <v-row>
+      <v-col cols="4">
+        <v-text-field v-model="param.id" label="ID"
+          hint="* Alpha characters" persistent-hint required></v-text-field>
+        <v-text-field type="password" v-model="param.password" label="Password"
+          hint="* Min 6 characters" persistent-hint required></v-text-field>
+        <v-text-field type="password" v-model="param.repeatPassword" label="RepeatPassword" required></v-text-field>
+        <v-text-field v-model="param.nick" label="Nick" required></v-text-field>
+        <v-text-field type="number" v-model="param.age" label="Age"
+          hint="* 1 ~ 100" persistent-hint required></v-text-field>
+        <v-textarea v-model="param.memo" label="Memo" required></v-textarea>
+
+        <v-btn color="success" @click="save" :disabled="$v.param.$invalid">
+          <v-icon left>done</v-icon> Save
+        </v-btn>
+      </v-col>
+      <v-col cols="8">
+        <v-data-table hide-default-footer disable-filtering disable-pagination
+          :headers="headers"
+          :items="items"
+          item-key="id"
+          :items-per-page="-1"
+          class="elevation-1"
+        ></v-data-table>
+      </v-col>
+    </v-row>
+  </v-col>
+</v-row>

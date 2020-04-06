@@ -1,26 +1,13 @@
-// https://www.typescriptlang.org/docs/handbook/declaration-files/templates/global-modifying-module-d-ts.html
-import * as request from 'request';
-import * as requestPromise from 'request-promise-native';
-import * as http from 'http';
-
-declare global {
-  //
-}
-
-declare module 'request-promise-native' {
-  type requestAPI = request.RequestAPI<requestPromise.RequestPromise, requestPromise.RequestPromiseOptions, request.RequiredUriUrl>;
-}
-
-declare module 'request-promise-native/errors' {
-  interface ErrorResponse extends StatusCodeError {
-    response: http.IncomingMessage & { body: any };
-  }
-}
+// https://vuejs.org/v2/guide/typescript.html#Augmenting-Types-for-Use-with-Plugins
+import { AxiosInstance, AxiosError } from 'axios';
 
 declare module 'vue/types/vue' {
   interface Vue {
-    $http: requestPromise.requestAPI;
+    // Plugins
+    $http: AxiosInstance;
+    $confirm(message: string, options?: object): Promise<boolean>;
+    // Mixin
+    alert(message: string): void;
+    httpErr(err: AxiosError): void;
   }
 }
-
-export {};

@@ -1,18 +1,15 @@
-/**
- * router.ts
- */
 import Vue from 'vue';
-import Router from 'vue-router';
+import VueRouter from 'vue-router';
 
 import * as component from '@/components';
 
-Vue.use(Router);
+Vue.use(VueRouter);
 
-export const router: Router = new Router({
+export const router: VueRouter = new VueRouter({
   routes: [
     { path: '/', component: component.Home },
     { path: '/webviewer/:page', component: component.Webviewer, props: true },
-    { path: '/local-data', component: component.LocalData },
-    { path: '/api-data', component: component.ApiData }
-  ]
+    { path: '/data/local-storage', component: component.LocalStorage },
+    { path: '/data/api-data', component: component.APIData },
+  ],
 });

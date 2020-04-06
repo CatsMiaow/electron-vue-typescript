@@ -1,6 +1,8 @@
-dist
-package
+.DS_Store
 .vscode
+dist
+build
+package
 
 
 # Logs
