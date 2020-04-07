@@ -1,26 +1,27 @@
 {
   "name": "electron-vue-typescript",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Electron Vue.js Structure for TypeScript Example",
-  "main": "dist/main",
+  "main": "dist/main/app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "postinstall": "electron-rebuild"
+    "postinstall": "electron-builder install-app-deps"
   },
   "dependencies": {
-    "pouchdb": "^6.3.4",
-    "pouchdb-find": "^6.3.4",
-    "request": "^2.81.0",
-    "request-promise-native": "^1.0.4",
-    "winston": "^2.3.1"
+    "axios": "^0.19.2",
+    "debug": "^4.1.1",
+    "electron-log": "^4.1.1",
+    "encoding-down": "^6.3.0",
+    "leveldown": "^5.6.0",
+    "levelup": "^4.3.2"
   },
   "devDependencies": {
-    "@types/pouchdb": "^6.1.1",
-    "@types/pouchdb-find": "^0.10.1",
-    "@types/request": "2.0.0",
-    "@types/request-promise-native": "^1.0.6",
-    "@types/winston": "^2.3.3",
-    "electron-rebuild": "^1.5.11"
+    "@types/debug": "^4.1.5",
+    "@types/encoding-down": "^5.0.0",
+    "@types/leveldown": "^4.0.2",
+    "@types/levelup": "^4.3.0",
+    "electron": "^8.2.0",
+    "electron-builder": "^22.4.1"
   },
   "repository": {
     "type": "git",
@@ -33,7 +34,7 @@
     "Vuejs",
     "Webpack"
   ],
-  "homepage": "https://tested.co.kr",
-  "author": "infiltrator@naver.com",
+  "homepage": "https://github.com/CatsMiaow/electron-vue-typescript#readme",
+  "author": "CatsMiaow",
   "license": "MIT"
 }

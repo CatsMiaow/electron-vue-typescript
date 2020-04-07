@@ -1,48 +1,39 @@
-/**
- * components/webviewer/Webviewer.ts
- */
 import Vue from 'vue';
 import { Component, Prop } from 'vue-property-decorator';
 
-import { logger } from '@/utils/logger';
+import { logger } from '@/utils';
 
 @Component({
-  template: require('./webviewer.html')
+  template: require('./webviewer.html'),
 })
 export class Webviewer extends Vue {
   @Prop()
-  private page: string;
+  private readonly page!: string;
 
-  get pageUrl(): string {
-    let url: string = '';
+  get pageUri(): string {
+    let url = '';
 
+    logger.info(`Webviewer: ${this.page}`);
     switch (this.page) {
       case 'google':
-        url = 'https://www.google.co.kr/';
+        url = 'https://www.google.com';
         break;
-      case 'naver':
-        url = 'https://www.naver.com/';
-        break;
-      case 'daum':
-        url = 'http://www.daum.net/';
+      case 'translate':
+        url = 'https://translate.google.com/m/translate';
         break;
       default:
-        break;
     }
 
     return url;
   }
 
   public created(): void {
+    logger.info('Webviewer created');
     this.$emit('loading');
   }
 
   public mounted(): void {
-    (<Electron.WebviewTag>document.querySelector('#webview')).style.height = `${window.innerHeight}px`;
+    logger.info('Webviewer created');
     this.$nextTick(() => this.$emit('ready'));
-  }
-
-  public finish(): void {
-    logger.info('Webview Finish');
   }
 }

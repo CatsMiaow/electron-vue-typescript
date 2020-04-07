@@ -1,21 +1,40 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>테스티드</title>
-    <base href="./">
-  </head>
 
-  <body>
-    <div id="Tested">
-      <md-layout md-align="center" md-vertical-align="center" v-show="loading">
-        <md-spinner md-indeterminate class="md-accent"></md-spinner>
-      </md-layout>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+  <title>electron-vue-typescript</title>
+  <base href="./">
+</head>
 
-      <router-view v-show="!loading"
-        @loading="loading = true"
-        @ready="loading = false"></router-view>
-    </div>
-  </body>
+<body>
+  <!-- https://vuetifyjs.com/en/components/application#default-application-markup -->
+  <v-app id="yourappid">
+    <appbar v-cloak></appbar>
+
+    <v-content>
+      <v-container fluid class="align-start fill-height pb-0">
+        <!-- Loading -->
+        <v-row align="center" justify="center" v-show="loading">
+          <v-progress-circular indeterminate :size="100" :width="4" color="green"></v-progress-circular>
+        </v-row>
+
+        <!-- View -->
+        <router-view v-show="!loading" @loading="loading = true" @ready="loading = false"></router-view>
+
+        <!-- Alert -->
+        <v-snackbar top v-model="showAlert" v-cloak>
+          {{ message }}
+          <v-btn icon @click="showAlert = message = false" :color="/^[A-z]+/.test(message) ? 'pink' : 'info'">
+            <v-icon>close</v-icon>
+          </v-btn>
+        </v-snackbar>
+      </v-container>
+    </v-content>
+
+    <!-- <v-footer app>Footer</v-footer> -->
+  </v-app>
+</body>
+
 </html>

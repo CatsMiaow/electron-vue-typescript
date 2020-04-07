@@ -1,105 +1,111 @@
-/**
- * MenuBar.ts
- */
-import { app, dialog, Menu, shell } from 'electron';
-import * as request from 'request-promise-native';
+import { app, BrowserWindow, dialog, Menu, MenuItem, shell } from 'electron';
+import axios, { AxiosResponse } from 'axios';
 
-import { logger } from './logger';
+import { logPath, dbPath } from '@/config';
+import { destroy, logger } from '@/utils';
 
-interface IPackage {
+interface Package {
   version: string;
 }
 
 export class MenuBar {
-  private template: Electron.Menu;
-  private dataPath: string = app.getPath('userData');
+  private readonly template: Menu;
 
-  constructor(
-    public mainWindow: Electron.BrowserWindow,
-    public webContents: Electron.WebContents
-  ) {
+  constructor(public mainWindow: BrowserWindow) {
     this.template = Menu.buildFromTemplate([{
       label: 'View',
       submenu: [{
-        label: '홈(Home)',
-        click(item: Electron.MenuItem, focusedWindow: Electron.BrowserWindow): void {
+        label: 'Home',
+        click(item: MenuItem, focusedWindow: BrowserWindow): void {
           if (focusedWindow) { // focusedWindow.reload();
-            webContents.send('router:replace', '/');
+            mainWindow.webContents.send('router:replace', '/');
           }
-        }
+        },
       }, {
-        label: '구글',
-        click(item: Electron.MenuItem, focusedWindow: Electron.BrowserWindow): void {
-          if (focusedWindow) { webContents.send('router:replace', '/webviewer/google'); }
-        }
+        type: 'separator',
       }, {
-        label: '네이버',
-        click(item: Electron.MenuItem, focusedWindow: Electron.BrowserWindow): void {
-          if (focusedWindow) { webContents.send('router:replace', '/webviewer/naver'); }
-        }
+        label: 'Google',
+        click(item: MenuItem, focusedWindow: BrowserWindow): void {
+          if (focusedWindow) { mainWindow.webContents.send('router:replace', '/webviewer/google'); }
+        },
       }, {
-        label: '다음',
-        click(item: Electron.MenuItem, focusedWindow: Electron.BrowserWindow): void {
-          if (focusedWindow) { webContents.send('router:replace', '/webviewer/daum'); }
-        }
-      }]
+        label: 'Google Translate',
+        click(item: MenuItem, focusedWindow: BrowserWindow): void {
+          if (focusedWindow) { mainWindow.webContents.send('router:replace', '/webviewer/translate'); }
+        },
+      }],
     }, {
       label: 'Data',
       submenu: [{
-        label: 'Local',
-        click(item: Electron.MenuItem, focusedWindow: Electron.BrowserWindow): void {
-          if (focusedWindow) { webContents.send('router:replace', '/local-data'); }
-        }
+        label: 'LocalStorage',
+        click(item: MenuItem, focusedWindow: BrowserWindow): void {
+          if (focusedWindow) { mainWindow.webContents.send('router:replace', '/data/local-storage'); }
+        },
       }, {
-        label: 'API',
-        click(item: Electron.MenuItem, focusedWindow: Electron.BrowserWindow): void {
-          if (focusedWindow) { webContents.send('router:replace', '/api-data'); }
-        }
-      }]
+        label: 'APIData',
+        click(item: MenuItem, focusedWindow: BrowserWindow): void {
+          if (focusedWindow) { mainWindow.webContents.send('router:replace', '/data/api-data'); }
+        },
+      }, {
+        type: 'separator',
+      }, {
+        label: 'Reset',
+        click: async (item: MenuItem, focusedWindow: BrowserWindow): Promise<void> => {
+          if (focusedWindow) {
+            await destroy(focusedWindow);
+          }
+        },
+      }],
     }, {
       role: 'help',
       submenu: [{
-        label: 'Github',
-        click: (): void => { shell.openExternal('https://github.com/CatsMiaow'); }
+        label: 'Open Logs',
+        click: async (): Promise<void> => { await shell.openExternal(`file://${logPath}`); },
       }, {
-        label: 'Tested',
-        click: (): void => { shell.openExternal('https://tested.kr'); }
+        label: 'Open Databases',
+        click: async (): Promise<void> => { await shell.openExternal(`file://${dbPath}`); },
       }, {
-        type: 'separator'
+        type: 'separator',
       }, {
-        label: '로그 폴더 열기',
-        click: (): void => { shell.openExternal(`file://${this.dataPath}/logs`); }
-      }, {
-        type: 'separator'
-      }, {
-        label: '업데이트 확인...',
-        click: (): void => {
-          request({
-            method: 'GET',
-            strictSSL: false,
-            uri: 'http://www.mocky.io/v2/595dd35c10000047017c17c2',
-            json: true
-          }).then((body: IPackage) => {
-            let message: string = '현재 사용 가능한 업데이트가 없습니다.';
-            if (body.version && body.version > app.getVersion()) {
-              message = '새로운 버전이 나왔습니다. 블라블라...';
+        label: 'Check for updates...',
+        click: async (): Promise<void> => {
+          try {
+            const body: AxiosResponse<Package> = await axios.get<Package>('http://www.mocky.io/v2/595dd35c10000047017c17c2');
+            const version: string = app.getVersion();
+
+            let message = 'No updates available.';
+            if (body.data.version && body.data.version > version) {
+              message = 'A new version has been released. Blah blah...';
             }
 
-            dialog.showMessageBox(mainWindow, {
+            await dialog.showMessageBox(mainWindow, {
               type: 'info',
               buttons: [],
-              title: '업데이트 확인...',
-              message
+              title: 'Check for updates...',
+              message,
             });
-          }).catch((err: Error) => {
-            logger.error('Request', err);
-          });
-        }
-      }]
+          } catch (err) {
+            logger.error('Request ', err);
+          }
+        },
+      }],
     }]);
   }
 
   public setAppMenu(): void {
+    if (process.platform === 'darwin') {
+      this.template.insert(2, new MenuItem({
+        label: 'Edit',
+        submenu: [
+          { role: 'undo' },
+          { role: 'redo' },
+          { type: 'separator' },
+          { role: 'cut' },
+          { role: 'copy' },
+          { role: 'paste' },
+        ],
+      }));
+    }
     Menu.setApplicationMenu(this.template);
   }
 }

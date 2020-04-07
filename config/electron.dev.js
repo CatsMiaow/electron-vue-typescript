@@ -2,9 +2,6 @@ const electron = require('electron');
 const electronDebug = require('electron-debug');
 const installExtension = require('electron-devtools-installer');
 
-process.env.NODE_ENV = 'development';
-process.env.ENV = 'development';
-
 // https://github.com/sindresorhus/electron-debug
 electronDebug({ showDevTools: 'undocked' });
 
@@ -15,4 +12,4 @@ electron.app.on('ready', () => {
     .catch(err => console.log('An error occurred: ', err));
 });
 
-require('../app/dist/main');
+require('../app/dist/main/app');

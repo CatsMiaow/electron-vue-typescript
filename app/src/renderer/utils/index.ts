@@ -1,4 +1,2 @@
-/**
- * utils/index.ts
- */
 export * from './util';
+export * from './logger';

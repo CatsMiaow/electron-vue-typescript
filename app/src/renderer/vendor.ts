@@ -1,10 +1,6 @@
-/**
- * vendor.ts
- */
-// tslint:disable:no-import-side-effect
-import 'vue-material/dist/vue-material.css';
-
+/* eslint-disable import/no-extraneous-dependencies */
+import '@mdi/font/css/materialdesignicons.css';
 import 'material-design-icons-iconfont/dist/material-design-icons.css';
+import 'vuetify/dist/vuetify.min.css';
 
 import '@/styles/style.css';
-// tslint:enable:no-import-side-effect

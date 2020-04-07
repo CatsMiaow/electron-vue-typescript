@@ -1,55 +1,17 @@
-.layout {
-  margin: 0;
-  padding: 5px 0px 0px 10px;
+/*#region Vuetify*/
+.theme--light .list,
+.theme--light .card,
+.theme--light .table,
+.theme--light .input-group.input-group--solo {
+  background-color: #FAFAFA;
+}
+/*#endregion Vuetify*/
+
+/* https://vuejs.org/v2/api/#v-cloak */
+[v-cloak] {
+  display: none;
 }
 
-
-/*<vue-material>*/
-.md-table .md-table-cell.md-numeric .md-table-cell-container {
-  display: inline;
+.cursor {
+  cursor: pointer;
 }
-.md-table .md-table-cell[width] .md-table-cell-container {
-  width: inherit;
-  text-overflow: ellipsis;
-  overflow: hidden;
-}
-/*</vue-material>*/
-
-
-/*<example>*/
-.complete-example {
-  height: 540px;
-  display: flex;
-  flex-flow: column;
-  position: relative;
-  overflow: hidden;
-  z-index: 1;
-}
-.complete-example .md-fab {
-  margin: 0;
-  position: absolute;
-  bottom: -20px;
-  left: 16px;
-}
-.complete-example .md-title {
-  color: #fff;
-}
-.complete-example .md-list {
-  overflow: auto;
-}
-.complete-example .md-list-action .md-icon {
-  color: rgba(#000, .26);
-}
-.complete-example .md-avatar-icon .md-icon {
-  color: #fff !important;
-}
-.complete-example .md-sidenav .md-list-text-container > :nth-child(2) {
-  color: rgba(#fff, .54);
-}
-.complete-example .md-account-header .md-list-item:hover .md-button:hover {
-  background-color: inherit;
-}
-.complete-example .md-account-header .md-avatar-list .md-list-item-container:hover {
-  background: none !important;
-}
-/*</example>*/

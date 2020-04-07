@@ -1,79 +1,81 @@
-/**
- * components/apiData/ApiData.ts
- */
-import * as rerrors from 'request-promise-native/errors';
+import { AxiosResponse } from 'axios';
 import Vue from 'vue';
 import { Component } from 'vue-property-decorator';
+import { required } from 'vuelidate/lib/validators';
 
 import { logger } from '@/utils/logger';
 
-export interface IApiForm {
-  userId: number;
+interface Param {
+  userId?: number;
   id?: number;
-  title: string;
-  body: string;
+  title?: string;
+  body?: string;
 }
 
-//<default>
-const iForm: IApiForm = { userId: 1, id: 0, title: '테스트', body: '내용'};
-//</default>
-
 @Component({
-  template: require('./apiData.html')
+  template: require('./apiData.html'),
+  validations: {
+    param: {
+      userId: { required },
+      title: { required },
+      body: { required },
+    },
+  },
 })
-export class ApiData extends Vue {
-  public form: IApiForm = Object.assign({}, iForm);
-  public list: IApiForm[] = [];
-  public activeTab: number = 0;
+export class APIData extends Vue {
+  public fetching: boolean = false;
+  public headers: object[] = [
+    { text: 'UserId', value: 'userId', divider: true },
+    { text: 'ID', value: 'id' },
+    { text: 'Title', value: 'title' },
+    { text: 'Body', value: 'body' },
+  ];
+  public param: Param = {};
+  public items: Param[] = [];
 
-  public created(): void {
+  public async created(): Promise<void> {
+    logger.info('APIData created');
     this.$emit('loading');
-
-    this.$http.get('https://jsonplaceholder.typicode.com/posts').then((result: IApiForm[]) => {
-      this.list = Object.assign([], this.list, result);
-
-      this.$nextTick(() => this.$emit('ready'));
-    }).catch((err: rerrors.ErrorResponse) => {
-      if (err.response && err.response.statusCode === 400) {
-        alert(err.response.body);
-      } else {
-        logger.error('Request', err, err.response.body);
-      }
-    });
+    await this.fetchData();
   }
 
   public mounted(): void {
-    // this.$nextTick(() => this.$emit('ready'));
+    logger.info('APIData mounted');
+    this.$nextTick(() => this.$emit('ready'));
   }
 
-  public save(): void {
-    this.$http.post('https://jsonplaceholder.typicode.com/posts', {
-      formData: this.form
-    }).then((row: IApiForm) => {
-      this.form.id = row.id;
-      this.list.unshift(Object.assign({}, this.form)); // 목록에 추가
+  public async save(): Promise<void> {
+    this.fetching = true;
+    try {
+      const body: AxiosResponse<Param> = await this.$http.post('https://jsonplaceholder.typicode.com/posts', { ...this.param });
 
-      Object.assign(this.form, iForm); // model 초기화
-      this.activeTab = 1; // 목록으로
-    }).catch((err: Error) => {
-      logger.error('Request', err);
-    });
+      this.items.unshift({ ...this.param, ...body.data });
+      this.param = {};
+    } catch (err) {
+      this.httpErr(err);
+    } finally {
+      this.fetching = false;
+    }
   }
 
-  // 수정 예시
-  public update(): void {
-    this.$http.put(`https://jsonplaceholder.typicode.com/posts/${this.form.id}`, {
-      formData: this.form
-    }).then((row: IApiForm) => {
-      //
-    }).catch((err: Error) => {
-      logger.error('Request', err);
-    });
+  // example
+  public async update(): Promise<void> {
+    try {
+      const body: AxiosResponse<Param> = await this.$http.put(`https://jsonplaceholder.typicode.com/posts/${this.param.id}`, {
+        ...this.param });
+
+      this.alert(JSON.stringify(body.data));
+    } catch (err) {
+      this.httpErr(err);
+    }
   }
 
-  public changeTab(index: number): void {
-    if (this.activeTab !== index) {
-      this.activeTab = index;
+  private async fetchData(): Promise<void> {
+    try {
+      const body: AxiosResponse<Param[]> = await this.$http.get('https://jsonplaceholder.typicode.com/posts');
+      this.items = body.data.slice(0, 50);
+    } catch (err) {
+      this.httpErr(err);
     }
   }
 }

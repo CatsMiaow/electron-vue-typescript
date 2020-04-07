@@ -1,76 +1,73 @@
-/**
- * Bootstrap.ts
- */
-import { BrowserWindow, dialog, ipcMain, Tray } from 'electron';
-import * as path from 'path';
+import { app, BrowserWindow, dialog, globalShortcut, ipcMain, Tray } from 'electron';
+import { unlinkSync } from 'fs';
+import LevelDOWN from 'leveldown';
 
-import { logger } from './logger';
-import { MenuBar } from './MenuBar';
+import { Database } from '@/../types';
+import { dbPath, isDev, lvPath } from '@/config';
+import { MenuBar } from '@/MenuBar';
+import { levelDefaults, logger } from '@/utils';
 
 export class Bootstrap {
-  public mainWindow: Electron.BrowserWindow;
-  public webContents: Electron.WebContents;
-  private setting: object;
-  private tray: Electron.Tray;
-  private appPath: string = path.resolve(__dirname, '..', '..');
+  public mainWindow!: Electron.BrowserWindow;
+  private webContents!: Electron.WebContents;
+  private tray!: Electron.Tray;
+  private readonly appPath: string = global.appPath;
 
-  constructor(public db: PouchDB.Database<{}>) {}
+  constructor(public db: Database) { }
 
-  // 일반 함수는 this 오류를 호출하여 화살표 함수로 처리
-  public ready = (): void => { // Ready
-    // DB 인덱스 생성 및 초기 데이터 입력
-    this.db.createIndex({
-      index: { fields: ['type'] }
-    }).then((index: PouchDB.Find.CreateIndexResponse<{}>): Promise<{}> => {
-      if (index.result !== 'created') {
-        return this.db.get('setting');
-      }
+  // Ready
+  public ready: () => Promise<void> = async () => {
+    try {
+      // Create DB default
+      await levelDefaults({
+        setting: {},
+      });
 
-      return Promise.all([
-        this.db.bulkDocs([
-          { _id: 'setting', type: 'setting', item: null }
-        ])
-      ]);
-    }).then((result: PouchDB.Core.Response[]) => {
-      if (!Array.isArray(result)) {
-        this.setting = result;
-      }
+      await this.createWindow();
+    } catch (err) {
+      logger.error('Ready ', err);
+      dialog.showErrorBox('Ready', err.message);
+    }
+  };
 
-      this.createWindow();
-    }).catch((err: Error) => {
-      logger.error('Database', err);
-      dialog.showErrorBox('Database', err.message);
-    });
-  }
-
-  private createWindow(): void {
+  private async createWindow(): Promise<void> {
     this.mainWindow = new BrowserWindow({
-      width: 800,
-      height: 600,
+      width: 1024,
+      height: 768,
       resizable: false,
       maximizable: false,
-      alwaysOnTop: false,
-      title: '테스티드',
-      icon: `${this.appPath}/resource/electron.ico`,
+      // alwaysOnTop: true,
+      title: 'yourtitle',
+      icon: `${this.appPath}/resource/icon.png`,
       show: false,
-      backgroundColor: '#fafafa'
+      backgroundColor: '#FAFAFA',
+      webPreferences: {
+        nodeIntegration: true,
+        webviewTag: true,
+      },
     });
     this.webContents = this.mainWindow.webContents;
 
-    new MenuBar(this.mainWindow, this.webContents).setAppMenu();
+    if (isDev) {
+      globalShortcut.register('CommandOrControl+R', () => this.webContents.reload());
+    }
 
-    this.setMainWindow();
+    const menubar: MenuBar = new MenuBar(this.mainWindow);
+    menubar.setAppMenu();
+
+    await this.setMainWindow();
     this.setWebContents();
     this.setIpcMain();
     this.setTray();
   }
 
-  private setMainWindow(): void {
-    this.mainWindow.loadURL((process.env.NODE_ENV === 'development')
-      ? 'http://localhost:3000'
-      : `file://${this.appPath}/dist/renderer/index.html`);
+  private async setMainWindow(): Promise<void> {
+    await this.mainWindow.loadURL(isDev ? 'http://localhost:3000' : `file://${this.appPath}/dist/renderer/index.html`);
 
-    // 최소화
+    this.mainWindow.once('ready-to-show', () => {
+      this.mainWindow.show();
+    });
+
     this.mainWindow.on('minimize', (event: Electron.Event) => {
       event.preventDefault();
       this.mainWindow.hide();
@@ -79,35 +76,40 @@ export class Bootstrap {
     this.mainWindow.on('closed', () => {
       delete this.mainWindow;
     });
-
-    this.mainWindow.once('ready-to-show', () => {
-      this.mainWindow.show();
-    });
   }
 
   private setWebContents(): void {
     this.webContents.on('did-finish-load', () => {
-      // Finish Them!
+      //
     });
   }
 
   private setIpcMain(): void {
-    ipcMain.on('ping', (event: Function, data: string) => {
-      dialog.showMessageBox(this.mainWindow, {
-        type: 'info',
-        buttons: [],
-        title: 'PingPong',
-        message: 'Ping!'
-      });
-
-      this.webContents.send('pong', true);
+    // Data Reset
+    ipcMain.on('destroy', async () => {
+      logger.info('destroy');
+      try {
+        await this.webContents.session.clearStorageData({ storages: ['localstorage', 'cachestorage'] });
+        await this.db.close();
+        LevelDOWN.destroy(lvPath, (err: Error | undefined) => {
+          if (err) {
+            throw err;
+          }
+          try {
+            unlinkSync(`${dbPath}/yourdb.db`);
+          } catch { /**/ }
+          app.quit();
+        });
+      } catch (err) {
+        logger.error('Destroy ', err);
+        dialog.showErrorBox('Destroy', err.message);
+      }
     });
   }
 
   private setTray(): void {
-    // 트레이 설정
-    this.tray = new Tray(`${this.appPath}/resource/electron.ico`);
-    this.tray.setToolTip('테스티드');
+    this.tray = new Tray(`${this.appPath}/resource/icon.png`);
+    this.tray.setToolTip('yourtitle');
     this.tray.on('click', () => {
       this.mainWindow.show();
     });

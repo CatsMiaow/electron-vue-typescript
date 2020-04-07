@@ -1,0 +1,5 @@
+appId: "com.yourdomain.yourappid"
+files: ["dist", "resource", "!src"]
+directories:
+  buildResources: "app/resource"
+  output: "package"
