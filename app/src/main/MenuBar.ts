@@ -59,10 +59,10 @@ export class MenuBar {
     }, {
       role: 'help',
       submenu: [{
-        label: 'Open logs folder',
+        label: 'Open Logs',
         click: async (): Promise<void> => { await shell.openExternal(`file://${logPath}`); },
       }, {
-        label: 'Open databases folder',
+        label: 'Open Databases',
         click: async (): Promise<void> => { await shell.openExternal(`file://${dbPath}`); },
       }, {
         type: 'separator',

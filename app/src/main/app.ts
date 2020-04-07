@@ -52,6 +52,7 @@ if (gotTheLock) {
 
 logger.info('Running...');
 
+app.allowRendererProcessReuse = true;
 app.on('ready', system.ready);
 
 app.on('window-all-closed', () => {
